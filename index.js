@@ -60,42 +60,59 @@ async function pay() {
         window.web3 = new Web3(ethereum);
         try {
             await ethereum.enable();
-            initPayButton()
+
+            window.web3.eth.getAccounts((error, result) => {
+                if (error) {
+                    alert(error);
+                } else {
+
+                    initPayButton(result[0]);
+                    //alert(result[0]);
+                }
+            });
+
+
+            // 
         } catch (err) {
             $('#status').html('User denied account access', err)
             alert(err);
         }
     } else if (window.web3) {
-        window.web3 = new Web3(web3.currentProvider)
-        initPayButton()
+        // window.web3 = new Web3(web3.currentProvider)
+        // initPayButton()
+
+        // do this later
     } else {
         $('#status').html('No Metamask (or other Web3 Provider) installed')
     }
 }
 
-const initPayButton = () => {
-        // paymentAddress is where funds will be send to
-        const paymentAddress = '0x80207077859f561B1b41Fc5a919b04f8e1AfC297'
-        const amountEth = "0.1"
+const initPayButton = (account) => {
+    // paymentAddress is where funds will be send to
+    const paymentAddress = '0x80207077859f561B1b41Fc5a919b04f8e1AfC297'
+    const amountEth = "0.1"
+    alert('sending');
+    window.web3.eth.sendTransaction({
+        from: account,
+        to: paymentAddress,
+        value: web3.utils.toWei(amountEth, 'ether')
+    }, function(err, transactionId) {
 
-        web3.eth.sendTransaction({
-            to: paymentAddress,
-            value: web3.utils.toWei(amountEth, 'ether')
-        }, (err, transactionId) => {
-            if (err) {
-                console.log('Payment failed', err)
-                $('#status').html('Payment failed')
-            } else {
-                console.log('Payment successful', transactionId)
-                $('#status').html('Payment successful')
-            }
-        })
+        console.log('callback');
+        if (err) {
+            console.log('Payment failed', err)
+            $('#status').html('Payment failed')
+        } else {
+            console.log('Payment successful', transactionId)
+            $('#status').html('Payment successful')
+        }
+    })
 }
 
 function loadMain() {
     // should probably make a function to load the navbar so that it doesn't just load within main
 
-   
+
     $.get("navbar.html", function (data) {
         $("#nav-placeholder").replaceWith(data);
 
@@ -141,7 +158,7 @@ function loadMain() {
                 { queue: false, duration: 'slow' }
             );
 
-            $('.pay-button').click(pay);
+        $('.pay-button').click(pay);
 
     });
 }
