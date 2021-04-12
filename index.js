@@ -66,7 +66,7 @@ async function pay() {
                     alert(error);
                 } else {
 
-                    initPayButton(result[0]);
+                    initPayButton(result[0]); // shouldn't always pay with account 0....
                     //alert(result[0]);
                 }
             });
@@ -89,22 +89,29 @@ async function pay() {
 
 const initPayButton = (account) => {
     // paymentAddress is where funds will be send to
-    const paymentAddress = '0x80207077859f561B1b41Fc5a919b04f8e1AfC297'
-    const amountEth = "0.1"
-    alert('sending');
+    const paymentAddress = '0x80207077859f561B1b41Fc5a919b04f8e1AfC297';//'0x80207077859f561B1b41Fc5a919b04f8e1AfC297'
+    const amountEth = "0.0001"
+    // alert('sending');
+
+
+    
     window.web3.eth.sendTransaction({
         from: account,
         to: paymentAddress,
         value: web3.utils.toWei(amountEth, 'ether')
-    }, function(err, transactionId) {
-
+    }, function (err, transactionId) {
+      
         console.log('callback');
         if (err) {
             console.log('Payment failed', err)
             $('#status').html('Payment failed')
         } else {
             console.log('Payment successful', transactionId)
-            $('#status').html('Payment successful')
+            $('#status').html('Payment successful' + transactionId);
+
+            transactionPending(transactionId, function() {
+
+            });
         }
     })
 }

@@ -1,3 +1,25 @@
+function transactionPending(id, callback) {
+    fetch('http://localhost:3001/transactionPending', {
+
+        // Adding method type 
+        method: "POST",
+
+        // Adding body or contents to send 
+        body: JSON.stringify({
+            transactionId: id
+        }),
+
+        // Adding headers to the request 
+        headers: {
+            "Content-type": "application/json"
+        }
+    }).then((response) => response.json())
+        .then((responseJSON) => {
+            // do stuff with responseJSON here...
+            callback(responseJSON);
+        });
+}
+
 function login(e, p, r, callback) {
     fetch('http://localhost:3000/login', {
 
