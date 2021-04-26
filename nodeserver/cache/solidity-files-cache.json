@@ -72,8 +72,8 @@
       ]
     },
     "C:\\xampp\\htdocs\\nodeserver\\contracts\\NFT.sol": {
-      "lastModificationDate": 1618172014624,
-      "contentHash": "ebc03423ce57963f329220d8fc1ce370",
+      "lastModificationDate": 1618984680228,
+      "contentHash": "86b20d5468b2268ee5c71c573a3c63ec",
       "sourceName": "contracts/NFT.sol",
       "solcConfig": {
         "version": "0.7.3",

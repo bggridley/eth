@@ -1,4 +1,4 @@
-function transactionPending(id, callback) {
+function transactionPending(id, contract, tokenId, callback) {
     fetch('http://localhost:3001/transactionPending', {
 
         // Adding method type 
@@ -6,7 +6,9 @@ function transactionPending(id, callback) {
 
         // Adding body or contents to send 
         body: JSON.stringify({
-            transactionId: id
+            transactionId: id,
+            contract: contract,
+            tokenID: tokenId,
         }),
 
         // Adding headers to the request 
@@ -20,53 +22,69 @@ function transactionPending(id, callback) {
         });
 }
 
-function login(e, p, r, callback) {
-    fetch('http://localhost:3000/login', {
+function getETHValue(callback) {
+    fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD", {
 
         // Adding method type 
-        method: "POST",
-
-        // Adding body or contents to send 
-        body: JSON.stringify({
-            email: e,
-            password: p,
-            raw: r,
-        }),
-
+        method: "GET",
         // Adding headers to the request 
         headers: {
-            "Content-type": "application/json"
+            "Content-type": "application/json",
         }
     }).then((response) => response.json())
         .then((responseJSON) => {
-            // do stuff with responseJSON here...
             callback(responseJSON);
         });
 }
 
-function createAccount(e, p, f, n, callback) {
-    fetch('http://localhost:3000/createAccount', {
+function getTokens(contract, callback) {
+    fetch('http://localhost:3001/getTokens/' + contract).then(response =>
+        response.json().then(data => ({
+            data: data,
+            status: response.status,
+        })
+        ).then(res => {
 
-        // Adding method type 
-        method: "POST",
+            callback(res);
 
-        // Adding body or contents to send 
-        body: JSON.stringify({
-            email: e,
-            password: p,
-            firstname: f,
-            lastname: n,
-        }),
+        }));
+}
 
-        // Adding headers to the request 
-        headers: {
-            "Content-type": "application/json"
-        }
-    }).then((response) => response.json())
-        .then((responseJSON) => {
-            // do stuff with responseJSON here...
-            callback(responseJSON);
-        });
+var requests = {};
+function getURL(url, callback) {
+    //"http://localhost:8080/" +
+
+
+    console.log(requests[url]);
+    if (requests[url] != undefined) {
+
+        (async () => {
+            console.log("waiting for variable");
+            while (requests[url] == "waiting") // define the condition as you like
+                await new Promise(resolve => setTimeout(resolve, 200));
+            callback(requests[url]);
+        })();
+
+
+
+    } else {
+        requests[url] = "waiting";
+
+        fetch("http://localhost:8080/" + url, {
+
+            // Adding method type 
+            method: "GET",
+            // Adding headers to the request 
+            headers: {
+                "Content-type": "application/json",
+            }
+        }).then((response) => response.json())
+            .then((responseJSON) => {
+                // do stuff with responseJSON here..
+                requests[url] = responseJSON;
+                callback(responseJSON);
+            });
+    }
 }
 
 function getEth(callback) {

@@ -6,10 +6,10 @@ const contract = require("../artifacts/contracts/NFT.sol/NFT.json");
 
 console.log(JSON.stringify(contract.abi));
 
-const contractAddress = '0x57faaa4873e04a779b5Db6075eAe6E109BC131e7';
+const contractAddress = '0xeCa87C0585C805AbbED980DcC008616Ce7676941';
 const nftContract = new web3.eth.Contract(contract.abi, contractAddress);
 
-const a = 'https://gateway.pinata.cloud/ipfs/QmXoTaT94ju9FWx1NETYY7GMX1pU3STGjqMuZnnTgCrkxS';
+const a = 'https://gateway.pinata.cloud/ipfs/QmV5kW6REp4Ag6a42rsFsD6y6hgipW4uvMGtj6v1jqKDuB';
 
 async function mintNFT(tokenURI) {
     const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); //get latest nonce

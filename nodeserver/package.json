@@ -21,6 +21,9 @@
     "@alch/alchemy-web3": "^1.0.2",
     "@openzeppelin/contracts": "^3.1.0-solc-0.7",
     "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0"
+    "cors-anywhere": "^0.4.4",
+    "dotenv": "^8.2.0",
+    "mysql": "^2.18.1",
+    "path": "^0.12.7"
   }
 }
