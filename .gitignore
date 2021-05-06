@@ -1,4 +1,4 @@
-nodeserver/node_modules
+nodeserver/node_modules/
 nodeserver/.env
 temp/
 later/node_modules

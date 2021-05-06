@@ -31,11 +31,30 @@ async function pay(token) {
     //awaitConnect(function(result) {
     //   alert(result);
     //});
+    alert('apy');
 
 
-    awaitConnect(function (address) {
-        initPayButton(address, token);
-    })
+
+    if (walletProvider === "METAMASK") {
+        alert('apy');
+        awaitConnect(function (address) {
+            alert('found provider:' + address);
+            initPayButton(address, token);
+        })
+    } else if (walletProvider === "TORUS") {
+        initPayButton(addresses[0], token);
+    } else if (walletProvider === "FORTMATIC") {
+
+
+        web3.eth.getAccounts((error, accounts) => {
+            if (error) throw error;
+            alert(accounts[0]); // ['0x...']
+            initPayButton(accounts[0], token);
+        });
+
+
+
+    }
 
 
     /*
@@ -80,7 +99,7 @@ const initPayButton = (account, token) => {
 
 
 
-    window.web3.eth.sendTransaction({
+    web3.eth.sendTransaction({
         from: account,
         to: paymentAddress,
         value: web3.utils.toWei(amountEth.toString(), 'ether')
@@ -205,7 +224,7 @@ function navGivenSize() {
     } else {
         $(".navReplaceable").html(
             '<li class="nav-item">\
-    <a class="nav-link" style="color:grey;" href="#">Collections</a></li>\
+    <a class="nav-link" style="color:grey;" onclick="loadCollections()" href="#">Collections</a></li>\
   <li class="nav-item">\
     <a id="contact-button" class="nav-link"  style="color:grey" href="#">Contact Us</a>\
   </li>\
@@ -281,7 +300,8 @@ function loadProductPage(contract, tokenID) {
                     })
 
                     $(".connect-button").on('click', function () {
-                        connectTorus();
+                        // connectTorus();
+                        connectWallet();
                     })
                     var usd = price * ETHtoUSD;
 
@@ -325,6 +345,29 @@ function loadProductPage(contract, tokenID) {
 var ETHtoUSD = 0;
 
 function loadMain() {
+    loadNav();
+
+
+    $.get("main.html", function (data) {
+        $("#body-placeholder").replaceWith(data);
+
+
+        loadWebGL();
+        
+        $("#body-placeholder").css('visibility', 'visible');
+
+        $("#body-placeholder")
+            .css('opacity', 0)
+            .slideDown('fast')
+            .animate(
+                { opacity: 1 },
+                { queue: false, duration: 'slow' }
+            );
+
+    });
+}
+
+function loadCollections() {
     // should probably make a function to load the navbar so that it doesn't just load within main
     loadNav();
 
@@ -332,7 +375,9 @@ function loadMain() {
         ETHtoUSD = result.USD;
     });
 
-    $.get("main.html", function (data) {
+    alert('test');
+
+    $.get("collections.html", function (data) {
         $("#body-placeholder").replaceWith(data);
 
 
