@@ -277,7 +277,8 @@ function update() {
 // have one object -- a simple two-dimensional square.
 //
 
-var increments = 50;
+var increments = 100;
+const heights = [-0.2, 0.2];
 function initBuffers(gl) {
 
     // Create a buffer for the square's positions.
@@ -295,7 +296,7 @@ function initBuffers(gl) {
 
     const positions = [];
 
-    const heights = [-0.5, 0.5];
+    
     for (var j = 0; j < 2; j++) {
 
         var y = heights[j];
@@ -321,6 +322,29 @@ function initBuffers(gl) {
             //alert(x + ", " + y);
         }
     }
+
+    for (var j = 0; j < 2; j++) {
+
+        var y = heights[j];
+
+        for (var i = 1; i <= increments; i++) {
+            var theta = (i / increments) * 2 * 3.14159;
+
+
+            var x = Math.cos(theta);
+            // var y = j;
+            var z = Math.sin(theta);
+
+            // console.log(theta + ": " + x + "," + z);
+
+            positions.push(x);
+            positions.push(y);
+            positions.push(z);
+            //alert(x + ", " + y);
+        }
+    }
+
+    // duplicate the positions, no middle position to be annoying. (starts at increments + 1) * 2
 
     console.log(positions);
 
@@ -411,6 +435,36 @@ function initBuffers(gl) {
         var of = i == 1 ? increments + 1 : 0;
 
 
+        /*if(i == 1) {
+            for (var i = 1; i <= increments; i++) {
+                indices.push(i);
+                indices.push(i + (increments) + 1);
+    
+                if (i == increments) {
+                    indices.push(increments + 2);
+                } else {
+                    indices.push(i + increments + 2);
+                }
+
+
+                if (i == increments) {
+                    indices.push(increments + 2);
+                } else {
+                    indices.push(i + increments + 2);
+                }
+
+                indices.push(i);
+                if(i == increments) {
+                    indices.push(1);
+                } else {
+                    indices.push(i + 1);
+                }
+                // fix
+    
+
+            }
+        }*/
+
         for (var j = 1; j <= increments; j++) {
             indices.push(of);
             indices.push(of + j);
@@ -422,8 +476,48 @@ function initBuffers(gl) {
 
         }
 
+        // i is between 1 and 20
+
+
         //alert(of);
     }
+
+    var start = (increments + 1) * 2;
+
+    for (var j = 0; j < increments; j++) {
+        indices.push(start + j);
+        indices.push(start + increments + j);
+
+        if(j == increments - 1) {
+            indices.push(start + increments);
+        } else {
+            indices.push(start + increments + j + 1);
+        }
+
+        if(j == increments - 1) {
+            indices.push(start + increments);
+        } else {
+            indices.push(start + increments + j + 1);
+        }
+
+        indices.push(start + j);
+
+        if(j == increments - 1) {
+            indices.push(start);
+        } else {
+            indices.push(start + j + 1);
+        }
+
+
+    }
+
+    // i is between 1 and 20
+
+
+
+
+
+
 
     console.log(indices);
 
@@ -447,8 +541,18 @@ function initBuffers(gl) {
             vertexNormals.push(0.0);
             vertexNormals.push(1.0);
             vertexNormals.push(0.0);
+        } else {
+            /// find normals ............. AKA take the positions lol
         }
     }
+
+    for(var i = (increments + 1) * 2 * 3; i < ((increments + 1) * 2 * 3) + (increments * 2 * 3); i+=3) {
+        vertexNormals.push(positions[i]);
+        vertexNormals.push(0);
+        vertexNormals.push(positions[i + 2]);
+    }
+
+    console.log(vertexNormals);
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
         gl.DYNAMIC_DRAW);
@@ -481,9 +585,9 @@ function generateNormals(vertices, indices) {
 var cubeRotation = 0;
 
 function drawScene() {
-     cubeRotation += 1 / 60;
+     cubeRotation += 1 / 600;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+    gl.clearColor(0.05, 0.2, 0.2, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
@@ -499,7 +603,7 @@ function drawScene() {
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
-    const fieldOfView = 40 * Math.PI / 180;   // in radians
+    const fieldOfView = 15 * Math.PI / 180;   // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
@@ -535,16 +639,16 @@ function drawScene() {
 
     mat4.translate(modelViewMatrix,     // destination matrix
         modelViewMatrix,     // matrix to translate
-        [0.0, 0.0, 0]);  // amount to translate
+        [0.0, 2.5, 0]);  // amount to translate
 
     mat4.rotate(modelViewMatrix,  // destination matrix
         modelViewMatrix,  // matrix to rotate
-        cubeRotation,     // amount to rotate in radians
+        Math.PI / 2 * cubeRotation,     // amount to rotate in radians
         [0, 0, 1]);       // axis to rotate around (Z)
     mat4.rotate(modelViewMatrix,  // destination matrix
         modelViewMatrix,  // matrix to rotate
         cubeRotation * .7,// amount to rotate in radians
-        [0, 1, 0]);       // axis to rotate around (X)
+        [1, 0, 0]);       // axis to rotate around (X)
 
     // these need to go after!
 
@@ -624,7 +728,7 @@ function drawScene() {
 
 
     {
-        const vertexCount = (increments * 2) * 3;
+        const vertexCount = (increments * 4) * 3;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
